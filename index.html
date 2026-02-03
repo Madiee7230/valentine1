@@ -8,8 +8,8 @@
 <!-- EMAILJS -->
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 <script>
-  (function(){
-    emailjs.init("xJtiE1vxusGghg4U3");
+  (function () {
+    emailjs.init("xJtiE1vxusGghg4U3"); // ✅ your public key
   })();
 </script>
 
@@ -21,30 +21,6 @@ body{
   display:flex;justify-content:center;align-items:center;
   color:#fff;
 }
-
-/* FLOATING HEARTS */
-.heart{
-  position:absolute;bottom:-20px;
-  font-size:22px;color:rgba(255,90,120,.8);
-  animation:float 8s linear infinite;
-}
-@keyframes float{
-  0%{transform:translateY(0);opacity:0}
-  10%{opacity:1}
-  100%{transform:translateY(-110vh);opacity:0}
-}
-
-/* CONFETTI */
-.confetti{
-  position:absolute;width:10px;height:10px;
-  animation:confettiFall 3s linear forwards;
-}
-@keyframes confettiFall{
-  0%{transform:translateY(0) rotate(0deg);opacity:1}
-  100%{transform:translateY(110vh) rotate(720deg);opacity:0}
-}
-
-/* CARD */
 .card{
   width:90%;max-width:520px;
   background:rgba(255,255,255,.08);
@@ -52,57 +28,20 @@ body{
   padding:46px;border-radius:26px;
   box-shadow:0 40px 120px rgba(0,0,0,.7);
   text-align:center;
-  transition:opacity .4s ease, transform .4s ease, filter .4s ease;
 }
-.card.exit{opacity:0;transform:translateY(-14px);filter:blur(6px)}
-.card.enter{opacity:0;transform:translateY(14px);filter:blur(6px)}
-.card.beat{animation:beat .35s ease}
-@keyframes beat{0%{transform:scale(1)}50%{transform:scale(1.03)}100%{transform:scale(1)}}
-
-/* PROGRESS */
-.progress{width:100%;height:8px;background:rgba(255,255,255,.2);border-radius:10px;overflow:hidden;margin-bottom:20px}
-.progress-fill{height:100%;background:linear-gradient(135deg,#ff6b8a,#ffb3c6);transition:width .4s ease}
-
-h2{font-weight:500;line-height:1.5;margin-bottom:14px}
-p{font-size:16px;line-height:1.7}
-.reaction{font-size:26px;margin:10px 0}
-
-/* BUTTONS */
 button{
   width:100%;margin:10px 0;
   padding:14px;border-radius:30px;border:none;
-  font-size:16px;cursor:pointer;transition:.25s ease
+  font-size:16px;cursor:pointer;
 }
-.primary{background:linear-gradient(135deg,#ff4d6d,#ff8fa3);color:white}
-.secondary{background:transparent;border:1px solid rgba(255,255,255,.4);color:white}
-button:hover{transform:translateY(-2px) rotate(-1deg)}
-.secondary:hover{transform:translateX(6px)}
-
-/* FINAL SCREEN */
-#finalScreen{
-  position:fixed;inset:0;
-  background:radial-gradient(circle,#8b1025,#1a0206);
-  display:flex;flex-direction:column;
-  justify-content:center;align-items:center;
-  text-align:center;
-  opacity:0;pointer-events:none;
-  transition:opacity 1.5s ease;
-  padding:24px;
-}
-#finalScreen.show{opacity:1;pointer-events:auto}
+.primary{background:#ff4d6d;color:white}
+.secondary{background:transparent;border:1px solid #fff;color:white}
 </style>
 </head>
 
 <body>
 
 <div id="card" class="card"></div>
-
-<audio id="bgMusic" loop>
-  <source src="romantic.mp3" type="audio/mpeg">
-</audio>
-<audio id="celebrate">
-  <source src="celebrate.mp3" type="audio/mpeg">
-</audio>
 
 <script>
 const NAME = "Dani";
@@ -119,18 +58,21 @@ const questions = [
 ];
 
 function renderIntro(){
-  document.getElementById("card").innerHTML=`
+  document.getElementById("card").innerHTML = `
     <h2>Hey ${NAME}… ❤️</h2>
     <p>Answer honestly… I have something important to ask you 😉</p>
     <button class="primary" onclick="start()">I’m ready</button>
   `;
 }
 
-function start(){ index=0; renderQuestion(); }
+function start(){
+  index = 0;
+  renderQuestion();
+}
 
 function renderQuestion(){
-  const q=questions[index];
-  document.getElementById("card").innerHTML=`
+  const q = questions[index];
+  document.getElementById("card").innerHTML = `
     <h2>${q[0]}</h2>
     <button class="primary" onclick="answer('soft')">${q[1]}</button>
     <button class="secondary" onclick="answer('bold')">${q[2]}</button>
@@ -140,10 +82,11 @@ function renderQuestion(){
 function answer(type){
   answers.push({
     question: questions[index][0],
-    answer: type==="soft" ? questions[index][1] : questions[index][2]
+    answer: type === "soft" ? questions[index][1] : questions[index][2]
   });
 
-  if(type==="soft") softScore++; else boldScore++;
+  if(type === "soft") softScore++;
+  else boldScore++;
 
   index++;
   if(index >= questions.length) finish();
@@ -151,17 +94,27 @@ function answer(type){
 }
 
 function finish(){
+  console.log("FINISH CALLED");
+  console.log("ANSWERS:", answers);
+
   emailjs.send(
-    "service_1gcd58s",
-    "valentine_answers",
+    "service_1gcd58s",        // ✅ your service ID
+    "valentine_answers",      // ✅ your template ID
     {
-      answers: answers.map(
-        (a,i)=>`${i+1}. ${a.question}\n→ ${a.answer}`
-      ).join("\n\n")
+      answers: answers
+        .map((a,i)=>`${i+1}. ${a.question}\n→ ${a.answer}`)
+        .join("\n\n")
+    }
+  ).then(
+    res => {
+      console.log("✅ EMAIL SENT", res);
+    },
+    err => {
+      console.error("❌ EMAIL FAILED", err);
     }
   );
 
-  document.getElementById("card").innerHTML=`
+  document.getElementById("card").innerHTML = `
     <h2>It’s a date ❤️</h2>
     <p>I wish I could be with you.</p>
   `;
