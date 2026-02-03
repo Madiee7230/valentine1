@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>One Important Question ❤️</title>
+
+<style>
+body{
+  margin:0;height:100vh;overflow:hidden;
+  background:radial-gradient(circle at top,#7a1220,#2b0209);
+  font-family:"Segoe UI",sans-serif;
+  display:flex;justify-content:center;align-items:center;
+  color:#fff;
+}
+
+/* FLOATING HEARTS */
+.heart{
+  position:absolute;bottom:-20px;
+  font-size:22px;color:rgba(255,90,120,.8);
+  animation:float 8s linear infinite;
+}
+@keyframes float{
+  0%{transform:translateY(0);opacity:0}
+  10%{opacity:1}
+  100%{transform:translateY(-110vh);opacity:0}
+}
+
+/* CONFETTI */
+.confetti{
+  position:absolute;width:10px;height:10px;
+  animation:confettiFall 3s linear forwards;
+}
+@keyframes confettiFall{
+  0%{transform:translateY(0) rotate(0deg);opacity:1}
+  100%{transform:translateY(110vh) rotate(720deg);opacity:0}
+}
+
+/* CARD */
+.card{
+  width:90%;max-width:520px;
+  background:rgba(255,255,255,.08);
+  backdrop-filter:blur(18px);
+  padding:46px;border-radius:26px;
+  box-shadow:0 40px 120px rgba(0,0,0,.7);
+  text-align:center;
+  transition:opacity .4s ease, transform .4s ease, filter .4s ease;
+}
+.card.exit{opacity:0;transform:translateY(-14px);filter:blur(6px)}
+.card.enter{opacity:0;transform:translateY(14px);filter:blur(6px)}
+.card.beat{animation:beat .35s ease}
+@keyframes beat{0%{transform:scale(1)}50%{transform:scale(1.03)}100%{transform:scale(1)}}
+
+/* PROGRESS */
+.progress{width:100%;height:8px;background:rgba(255,255,255,.2);border-radius:10px;overflow:hidden;margin-bottom:20px}
+.progress-fill{height:100%;background:linear-gradient(135deg,#ff6b8a,#ffb3c6);transition:width .4s ease}
+
+h2{font-weight:500;line-height:1.5;margin-bottom:14px}
+p{font-size:16px;line-height:1.7}
+.reaction{font-size:26px;margin:10px 0}
+
+/* BUTTONS */
+button{
+  width:100%;margin:10px 0;
+  padding:14px;border-radius:30px;border:none;
+  font-size:16px;cursor:pointer;transition:.25s ease
+}
+.primary{background:linear-gradient(135deg,#ff4d6d,#ff8fa3);color:white}
+.secondary{background:transparent;border:1px solid rgba(255,255,255,.4);color:white}
+button:hover{transform:translateY(-2px) rotate(-1deg)}
+.secondary:hover{transform:translateX(6px)}
+
+/* GLOW */
+.glow{animation:glow 1.5s ease-in-out infinite alternate}
+@keyframes glow{from{box-shadow:0 0 12px rgba(255,120,150,.4)}to{box-shadow:0 0 28px rgba(255,120,150,.9)}}
+
+/* FINAL SCREEN */
+#finalScreen{
+  position:fixed;inset:0;
+  background:radial-gradient(circle,#8b1025,#1a0206);
+  display:flex;flex-direction:column;
+  justify-content:center;align-items:center;
+  text-align:center;
+  opacity:0;pointer-events:none;
+  transition:opacity 1.5s ease;
+  padding:24px;
+}
+#finalScreen.show{opacity:1;pointer-events:auto}
+#finalScreen h1{font-size:40px;margin-bottom:16px}
+#finalScreen p{font-size:18px;max-width:600px;margin-bottom:20px}
+</style>
+</head>
+
+<body>
+
+<div id="hearts"></div>
+<div class="card" id="card"></div>
+
+<div id="finalScreen">
+  <h1 id="finalTitle"></h1>
+  <p id="finalMessage"></p>
+  <button class="primary" onclick="restart()">Replay 💞</button>
+</div>
+
+<audio id="bgMusic" loop>
+  <source src="romantic.mp3" type="audio/mpeg">
+</audio>
+<audio id="celebrate">
+  <source src="celebrate.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+/* PERSONALIZATION */
+const NAME = "Dani";
+
+/* HEARTS */
+setInterval(()=>{
+  const h=document.createElement("div");
+  h.className="heart"; h.innerHTML="❤️";
+  h.style.left=Math.random()*100+"vw";
+  h.style.animationDuration=6+Math.random()*4+"s";
+  document.body.appendChild(h);
+  setTimeout(()=>h.remove(),9000);
+},600);
+
+/* MUSIC */
+document.addEventListener("click",()=>{document.getElementById("bgMusic").play()},{once:true});
+
+/* CONFETTI */
+function launchConfetti(){
+  for(let i=0;i<80;i++){
+    const c=document.createElement("div");
+    c.className="confetti";
+    c.style.left=Math.random()*100+"vw";
+    c.style.background=`hsl(${Math.random()*360},100%,60%)`;
+    c.style.animationDuration=2+Math.random()*2+"s";
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),4000);
+  }
+}
+
+/* QUESTIONS */
+const questions=[
+["How should I come close to you?","Slowly and softly","Right away with a smile","😌💞"],
+["When I look at you, do you want me to…","Grab you right away","Slowly bulld to get all of you","😏"],
+["My touch should be…","Gentle and cute","A little bold",""],
+["Do you like teasing that is…","Slow and fun","Quick and exciting","😉"],
+["When I kiss you, should it be…","Soft and sweet","Long and deep","😘"],
+["Do you like being wanted in a way that feels…","Warm and safe","Hot and exciting","❤️‍🔥"],
+["When we’re alone, should I be more…","Playful","Confident","😈"],
+["If I pull you closer, should it feel…","Cute and cozy","A little naughty","🙈"],
+["Do you like when I tease you by…","Smiling and waiting","Getting closer","👀"],
+["When I say your name, should it sound…","Sweet","Flirty",""],
+["Do you like love that feels more…","Soft and cuddly","Spicy and fun",""],
+["When I touch you, should it make you feel…","Loved","Wanted","💗"],
+["Do you enjoy attention that is…","Cute and caring","All on you","✨"],
+["If I say ‘come here,’ should it feel like…","A sweet request","A fun dare","😼"],
+["Do you like when I take my time…","To tease you","Because I can’t help myself","😏"],
+["Being close to me should feel like…","A cozy hug","A fun secret","🤫"],
+["Do you like affection that makes you…","Smile","Bite your lip","🫦"],
+["When I choose you, it’s because…","You make me happy","You drive me crazy","🥰"],
+["Do you like being mine in a way that feels…","Sweet","A little naughty","😈"],
+[`So tell me… ${NAME}, will you be my Valentine? ❤️`,"Yes 🥰","Of course 😘","🎉💖"]
+];
+
+let index = -1;
+let softScore = 0;
+let boldScore = 0;
+
+/* INTRO */
+function renderIntro(){
+  document.getElementById("card").innerHTML=`
+    <h2>Hey ${NAME}… ❤️</h2>
+    <p>
+      I want to ask you some personal questions.<br><br>
+      Cute. Funny. A little naughty.<br><br>
+      Answer honestly… because at the end,<br>
+      I have something important to ask you 😉
+    </p>
+    <button class="primary" onclick="start()">I’m ready</button>
+  `;
+}
+
+function start(){
+  index = 0;
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const q=questions[index];
+  const progress=((index+1)/questions.length)*100;
+  const isFinal=index===questions.length-1;
+
+  document.getElementById("card").innerHTML=`
+    <div class="progress"><div class="progress-fill" style="width:${progress}%"></div></div>
+    <h2 class="${isFinal?"glow":""}">${q[0]}</h2>
+    <div class="reaction">${q[3]}</div>
+    <button class="primary ${isFinal?"glow":""}" onclick="answer('soft')">${q[1]}</button>
+    <button class="secondary ${isFinal?"glow":""}" onclick="answer('bold')">${q[2]}</button>
+  `;
+}
+
+function answer(type){
+  if(type==="soft") softScore++;
+  else boldScore++;
+
+  const card=document.getElementById("card");
+  card.classList.add("beat","exit");
+
+  const delay = index===questions.length-2 ? 800 : 400;
+
+  setTimeout(()=>{
+    card.classList.remove("exit","beat");
+
+    if(index===questions.length-1){
+      finish();
+      return;
+    }
+    index++;
+    renderQuestion();
+    card.classList.add("enter");
+    setTimeout(()=>card.classList.remove("enter"),50);
+  },delay);
+}
+
+function finish(){
+  document.getElementById("bgMusic").pause();
+  document.getElementById("celebrate").play();
+  launchConfetti();
+
+  const style = softScore >= boldScore ? "soft" : "bold";
+
+  document.getElementById("finalTitle").textContent =
+    `It’s a date, ${NAME} ❤️`;
+
+  document.getElementById("finalMessage").innerHTML =
+    style === "soft"
+    ? `
+      You know what I loved most, ${NAME}?<br><br>
+      The way you chose closeness that feels warm, safe, and full of care.
+      The kind of affection that lingers quietly… the kind that feels like
+      being chosen without needing to rush anything.<br><br>
+      It tells me you value connection, comfort, and moments that feel real.
+      And honestly that’s exactly how I want us to be.
+      Slow when we need to be. Close when it matters.
+      Always intentional. Always us.<br><br>
+      So this Valentine’s… I don’t just want a normal converstation.
+      I want a memory we’ll smile about.
+	  Wish i could be with you!!
+    `
+    : `
+      I knew it, ${NAME}.<br><br>
+      You like the spark. The confidence. The moments that feel exciting
+      and a little dangerous in the best way.
+      The kind of closeness that makes your heart beat faster
+      and your smile give you away.<br><br>
+      It tells me you enjoy being wanted, being chosen boldly,
+      and letting moments turn electric when they’re meant to.
+      And I love that energy — because with you,
+      nothing feels ordinary.<br><br>
+      This Valentine’s… I don’t just want a date.
+      I want a night that feels unforgettable.
+      And I want it with you.
+	  Wish i could be with you!!
+    `;
+
+  document.getElementById("finalScreen").classList.add("show");
+  document.getElementById("card").style.display="none";
+}
+
+/* RESTART */
+function restart(){
+  softScore = 0; boldScore = 0;
+  index = -1;
+  document.getElementById("finalScreen").classList.remove("show");
+  document.getElementById("card").style.display="block";
+  document.getElementById("celebrate").pause();
+  document.getElementById("celebrate").currentTime=0;
+  document.getElementById("bgMusic").play();
+  renderIntro();
+}
+
+renderIntro();
+</script>
+
+</body>
+</html>
